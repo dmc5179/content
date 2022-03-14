@@ -66,6 +66,7 @@ dir_permissions_library_dirs
 dir_perms_world_writable_sticky_bits
 directory_permissions_var_log_audit
 disable_prelink
+disallow_bypass_password_sudo
 display_login_attempts
 enable_dracut_fips_module
 enable_fips_mode
@@ -133,7 +134,11 @@ grub2_enable_fips_mode
 grub2_enable_iommu_force
 grub2_enable_selinux
 grub2_ipv6_disable_argument
+grub2_mce_argument
+grub2_nosmap_argument_absent
+grub2_nosmep_argument_absent
 grub2_nousb_argument
+grub2_slab_nomerge_argument
 grub2_uefi_admin_username
 grub2_uefi_password
 harden_openssl_crypto_policy
@@ -172,6 +177,7 @@ mount_option_var_tmp_noexec
 mount_option_var_tmp_nosuid
 network_nmcli_permissions
 no_all_squash_exports
+no_empty_passwords_etc_shadow
 no_legacy_plus_entries_etc_group
 no_legacy_plus_entries_etc_passwd
 no_legacy_plus_entries_etc_shadow
@@ -285,6 +291,7 @@ sudoers_no_command_negation
 sudoers_no_root_target
 sysctl_crypto_fips_enabled
 sysctl_fs_suid_dumpable
+sysctl_kernel_panic_on_oops
 sysctl_net_ipv4_ip_forward
 sysctl_net_ipv4_tcp_invalid_ratelimit
 sysctl_net_ipv6_conf_all_disable_ipv6

@@ -1,10 +1,10 @@
 <html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>DRAFT - DISA STIG for Oracle Linux 8</title>
+<title>DISA STIG for Oracle Linux 8</title>
 </head>
 <body>
-	<br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DRAFT - DISA STIG for Oracle Linux 8</div>
+	<br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Oracle Linux 8</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -2831,10 +2831,6 @@ into the account without authentication. Remove any instances of the
 <tt>/etc/pam.d/system-auth</tt>
 
 to prevent logins with empty passwords.
-Note that this rule is not applicable for systems running within a
-container. Having user with empty password within a container is not
-considered a risk, because it should not be possible to directly login into
-a container anyway.
   </td>
   <td xml:lang="en-US">
 If an account has an empty password, anyone could log in and
@@ -3241,7 +3237,7 @@ The <tt>maxpoll</tt> should be configured to
 <tt>18_hours</tt> in <tt>/etc/ntp.conf</tt> or
 <tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
 <tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following:
+add the following after each `server`, `pool` or `peer` entry:
 <pre>maxpoll <tt>18_hours</tt></pre>
 to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
 should be configured too.
@@ -3746,9 +3742,13 @@ Having a non-default grub superuser username makes password-guessing attacks les
   <td xml:lang="en-US">
 To improve the kernel capacity to queue all log events, even those which occurred
 prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
-GRUB 2 command line for the Linux operating system in
-<tt>/etc/default/grub</tt>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="crashkernel=auto rd.lvm.lv=VolGroup/LogVol06 rd.lvm.lv=VolGroup/lv_swap rhgb quiet rd.shell=0 audit=1 audit_backlog_limit=8192"</pre>
+GRUB 2 command line for the Linux operating system.
+To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
+argument to newly installed kernels, ad <tt>audit_backlog_limit=8192</tt> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<tt>/etc/default/grub</tt> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
   </td>
   <td xml:lang="en-US">
 audit_backlog_limit sets the queue length for audit events awaiting transfer
@@ -3765,9 +3765,13 @@ defined by audit failure flag is taken.
   <td xml:lang="en-US">
 To enable poisoning of free pages,
 add the argument <tt>page_poison=1</tt> to the default
-GRUB 2 command line for the Linux operating system in
-<tt>/etc/default/grub</tt>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="page_poison=1"</pre>
+GRUB 2 command line for the Linux operating system.
+To ensure that <tt>page_poison=1</tt> is added as a kernel command line
+argument to newly installed kernels, ad <tt>page_poison=1</tt> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<tt>/etc/default/grub</tt> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... page_poison=1 ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="page_poison=1"</pre>
   </td>
   <td xml:lang="en-US">
 Poisoning writes an arbitrary value to freed pages, so any modification or
@@ -3809,9 +3813,13 @@ and whether to enter single-user mode.
   <td xml:lang="en-US">
 To enable poisoning of SLUB/SLAB objects,
 add the argument <tt>slub_debug=P</tt> to the default
-GRUB 2 command line for the Linux operating system in
-<tt>/etc/default/grub</tt>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="slub_debug=P"</pre>
+GRUB 2 command line for the Linux operating system.
+To ensure that <tt>slub_debug=P</tt> is added as a kernel command line
+argument to newly installed kernels, ad <tt>slub_debug=P</tt> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<tt>/etc/default/grub</tt> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... slub_debug=P ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=P"</pre>
   </td>
   <td xml:lang="en-US">
 Poisoning writes an arbitrary value to freed objects, so any modification or
@@ -4847,9 +4855,13 @@ with security implications.
   <td xml:lang="en-US">
 To disable use of virtual syscalls,
 add the argument <tt>vsyscall=none</tt> to the default
-GRUB 2 command line for the Linux operating system in
-<tt>/etc/default/grub</tt>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="vsyscall=none"</pre>
+GRUB 2 command line for the Linux operating system.
+To ensure that <tt>vsyscall=none</tt> is added as a kernel command line
+argument to newly installed kernels, ad <tt>vsyscall=none</tt> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<tt>/etc/default/grub</tt> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... vsyscall=none ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="vsyscall=none"</pre>
   </td>
   <td xml:lang="en-US">
 Virtual Syscalls provide an opportunity of attack for a user who has control
@@ -6322,11 +6334,9 @@ FIPS mode by automatically configuring the following:
 <ul>
 <li>Setting the kernel FIPS mode flag (<tt>/proc/sys/crypto/fips_enabled</tt>) to <tt>1</tt></li>
 <li>Creating <tt>/etc/system-fips</tt></li>
-<li>Setting the system crypto policy in <tt>/etc/crypto-policies/config</tt> to <tt>FIPS</tt></li>
+<li>Setting the system crypto policy in <tt>/etc/crypto-policies/config</tt> to <tt><tt>fips</tt></tt></li>
 <li>Loading the Dracut <tt>fips</tt> module</li>
 </ul>
-This rule also ensures that the system policy is set to <tt><tt>fips</tt></tt>.
-Furthermore, the system running in FIPS mode should be FIPS certified by NIST.
   </td>
   <td xml:lang="en-US">
 Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
@@ -6401,9 +6411,13 @@ and makes system configuration more fragmented.
   <td xml:lang="en-US">
 To enable Kernel page-table isolation,
 add the argument <tt>pti=on</tt> to the default
-GRUB 2 command line for the Linux operating system in
-<tt>/etc/default/grub</tt>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="pti=on"</pre>
+GRUB 2 command line for the Linux operating system.
+To ensure that <tt>pti=on</tt> is added as a kernel command line
+argument to newly installed kernels, ad <tt>pti=on</tt> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<tt>/etc/default/grub</tt> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... pti=on ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="pti=on"</pre>
   </td>
   <td xml:lang="en-US">
 Kernel page-table isolation is a kernel feature that mitigates
@@ -6621,10 +6635,13 @@ access restriction in some configurations.
   <td xml:lang="en-US">
 To ensure all processes can be audited, even those which start
 prior to the audit daemon, add the argument <tt>audit=1</tt> to the default
-GRUB 2 command line for the Linux operating system in
-
-<tt>/boot/grub2/grubenv</tt>, in the manner below:
-<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+GRUB 2 command line for the Linux operating system.
+To ensure that <tt>audit=1</tt> is added as a kernel command line
+argument to newly installed kernels, ad <tt>audit=1</tt> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<tt>/etc/default/grub</tt> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
   </td>
   <td xml:lang="en-US">
 Each process on the system carries an "auditable" flag which indicates whether
@@ -6691,6 +6708,22 @@ Editing the Crypto Policy back-end is not recommended.
 Check the crypto-policies(7) man page and choose a policy that configures TLS
 protocol to version 1.2 or higher, for example DEFAULT, FUTURE or FIPS policy.
 Or create and apply a custom policy that restricts minimum TLS version to 1.2.
+
+For example for versions prior to crypto-policies-20210617-1.gitc776d3e.el8.noarch
+this is expected:
+
+<pre>$ sudo grep -i MinProtocol /etc/crypto-policies/back-ends/opensslcnf.config
+
+MinProtocol = TLSv1.2
+</pre>
+
+Or for version crypto-policies-20210617-1.gitc776d3e.el8.noarch and newer this is
+expected:
+
+<pre>$ sudo grep -i MinProtocol /etc/crypto-policies/back-ends/opensslcnf.config
+
+TLS.MinProtocol = TLSv1.2
+DTLS.MinProtocol = DTLSv1.2</pre>
   </td>
   <td xml:lang="en-US">
 Without cryptographic integrity protections, information can be altered by
@@ -6913,8 +6946,8 @@ time synchronization, centralized authentication, and remote system logging.
   <td>N/A</td>
   <td>Restrict Exposed Kernel Pointer Addresses Access</td>
   <td xml:lang="en-US">
-To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.kptr_restrict = 1</pre>
+To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=<tt>1</tt></pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.kptr_restrict = <tt>1</tt></pre>
   </td>
   <td xml:lang="en-US">
 Exposing kernel pointers (through procfs or <tt>seq_printf()</tt>) exposes
@@ -6923,7 +6956,7 @@ in the kernel allowing a write access to any of this structure, the kernel can b
 option disallow any program withtout the CAP_SYSLOG capability from getting the kernel pointers addresses,
 replacing them with 0.
   </td>
-  <td></td>
+  <td>sysctl_kernel_kptr_restrict_value=1</td>
 </tr>
 <tr>
   <td>SC-30<br/>SC-30(2)<br/>CM-6(a)</td>
@@ -7324,6 +7357,9 @@ utility to read audit rules during daemon startup, add the following line to
   <td xml:lang="en-US">
 The actions taken by system administrators should be audited to keep a record
 of what was executed on the system, as well as, for accountability purposes.
+Editing the sudoers file may be sign of an attacker trying to
+establish persistent methods to a system, auditing the editing of the sudoers
+files mitigates this risk.
   </td>
   <td></td>
 </tr>
@@ -7346,6 +7382,9 @@ utility to read audit rules during daemon startup, add the following line to
   <td xml:lang="en-US">
 The actions taken by system administrators should be audited to keep a record
 of what was executed on the system, as well as, for accountability purposes.
+Editing the sudoers file may be sign of an attacker trying to
+establish persistent methods to a system, auditing the editing of the sudoers
+files mitigates this risk.
   </td>
   <td></td>
 </tr>
@@ -7391,9 +7430,6 @@ systems with limited audit storage capacity.
 The <tt>tmux</tt> terminal multiplexer is used to implement
 automatic session locking. It should be started from
 <tt>/etc/bashrc</tt> or drop-in files within <tt>/etc/profile.d/</tt>.
-Additionally it must be ensured that the <tt>tmux</tt> process is running
-and it can be verified with the following command:
-<pre>ps all | grep tmux | grep -v grep</pre>
   </td>
   <td xml:lang="en-US">
 Unlike <tt>bash</tt> itself, the <tt>tmux</tt> terminal multiplexer
